@@ -108,7 +108,7 @@ MicroService to serve Content Retrieval from Elastic Search
 
 ##### GET CALLS
 
-/client/getResourceById/{id}
+/client/getResourceById/<index>/{id}
 
 ```
 - Method: GET
@@ -121,7 +121,7 @@ http://165.227.240.203:9200/cms/_search?q=entityType:MOVIE
 http://165.227.240.203:9200/cms/_search?q=entityType:Episode
 ```
 
-/client/getResourceByType/{type}
+/client/getResourceByType/<index>/{type}
 
 ```
 - Method: GET
@@ -176,7 +176,7 @@ POST CALL:
 
 
 ```
-/client/search
+/client/search/<index>/
 
 ```
 - Method: GET
@@ -222,7 +222,7 @@ Corresponding ES Query:
 
 ```
 
-/client/searchByKeyword?query=<Search Text>
+/client/searchByKeyword/<index>/?query=<Search Text>
 
 ```
 - Method: GET
