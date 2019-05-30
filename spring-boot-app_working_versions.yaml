@@ -1,0 +1,82 @@
+apiVersion: apps/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: client-service
+  namespace: es-system
+spec:
+  selector:
+    matchLabels:
+      app: cmsclient
+  replicas: 1 # tells deployment to run 3 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      name: cmsclient
+      namespace: es-system
+      labels:
+        app: cmsclient
+        version: v1
+    spec:
+      containers:
+      - name: cmsclient
+        image: anubratap/cms-client:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8082
+          name: http
+        envFrom:
+        - configMapRef:
+           name: client-configmap
+        volumeMounts:
+        - name: client-config
+          mountPath: "clientconfig"
+      volumes:
+      - name: client-config
+        configMap:
+          name: client-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cmsclient
+  namespace: es-system
+  labels:
+    app: cmsclient
+spec:
+  ports:
+  - port: 80
+    targetPort: 8082
+    protocol: TCP
+    name: http-client
+  selector:
+    app: cmsclient
+  type: LoadBalancer
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: cmsclient
+  namespace: es-system
+spec:
+  host: cmsclient
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: cmsclient
+  namespace: es-system
+spec:
+  hosts:
+  - cmsclient
+  http:
+  - match:
+    - uri:
+        prefix: /client
+    route:
+    - destination:
+        host: cmsclient
+        port:
+          number: 80
