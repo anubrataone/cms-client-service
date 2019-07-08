@@ -235,3 +235,7 @@ Corresponding ES Query:
         - pageNumber: Integer field  (optional)
 
 ```
+
+Aggregator - to be built
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
